@@ -7,16 +7,4 @@ dependencies = [
     "ccx-ocp-core",
     "ccx-messaging==4.3.5",
     "ccx-rules-ocp==2026.01.13",
-    "ccx-rules-processing==0.0.3",
 ]
-
-# Use Nexus index for the 'ccx-*' packages.
-[[tool.uv.index]]
-name = "redhat-nexus"
-url = "https://nexus.corp.redhat.com/repository/obsint-pypi/simple/"
-
-[tool.uv.sources]
-ccx-ocp-core = { index = "redhat-nexus" }
-ccx-messaging = { index = "redhat-nexus" }
-ccx-rules-ocp = { index = "redhat-nexus" }
-ccx-rules-processing = { index = "redhat-nexus" }

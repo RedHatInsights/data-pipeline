@@ -25,11 +25,7 @@ uv --native-tls sync
 ```
 uv export --format requirements-txt --no-hashes > requirements.txt
 ```
-4. Add the package index url line at the top of the file `requirements.txt`
-```
--i https://nexus.corp.redhat.com/repository/obsint-pypi/simple
-```
-5. Remove the `ccx-ocp-core` from the dependency list. The latest version is always pulled in automatically.
+4. Remove the `ccx-ocp-core` from the dependency list. The latest version is always pulled in automatically.
 
 ## Smoke Tests
 
