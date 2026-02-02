@@ -1,0 +1,307 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: ccx-data-pipeline
+objects:
+
+- apiVersion: cloud.redhat.com/v1alpha1
+  kind: ClowdApp
+  metadata:
+    name: ccx-data-pipeline
+  spec:
+    envName: ${ENV_NAME}
+    testing:
+      iqePlugin: ccx
+    dependencies:
+      - ingress
+    deployments:
+      - name: archives-handler
+        minReplicas: ${{REPLICAS}}
+        webServices:
+          public:
+            enabled: false
+          private:
+            enabled: false
+          metrics:
+            enabled: true
+        podSpec:
+          env:
+            - name: CONFIG_PATH
+              value: /data/config.yaml
+            - name: LOGGING_TO_CW_ENABLED
+              value: "True"
+            - name: INSIGHTS_RESULTS_SMART_PROXY__CLOUDWATCH__DEBUG
+              value: ${CLOUDWATCH_DEBUG}
+            - name: CW_STREAM_NAME
+              value: ${IRSP_LOG_STREAM}
+            - name: AWS_REGION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwatch
+                  key: aws_region
+                  optional: true
+            - name: CW_LOG_GROUP
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwatch
+                  key: log_group_name
+                  optional: true
+            - name: CW_AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwatch
+                  key: aws_access_key_id
+                  optional: true
+            - name: CW_AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwatch
+                  key: aws_secret_access_key
+                  optional: true
+            - name: CLOWDER_ENABLED
+              value: ${CLOWDER_ENABLED}
+            - name: CDP_PLATFORM_SERVICE
+              value: ${CDP_PLATFORM_SERVICE}
+            - name: CDP_GROUP_ID
+              value: ${CDP_GROUP_ID}
+            - name: CDP_CONSUMER_SERVER
+              value: ${CDP_CONSUMER_SERVER}
+            - name: SENTRY_ENABLED
+              value: ${SENTRY_ENABLED}
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  key: dsn
+                  name: ccx-data-pipeline-dsn
+                  optional: true
+            - name: SENTRY_ENVIRONMENT
+              value: ${ENV_NAME}
+            - name: ALLOW_UNSAFE_LINKS
+              value: ${ALLOW_UNSAFE_LINKS}
+          image: ${IMAGE}:${IMAGE_TAG}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /metrics
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /metrics
+              port: 8000
+              scheme: HTTP
+            periodSeconds: 10
+            initialDelaySeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
+          startupProbe:
+            httpGet:
+              path: /metrics
+              port: 8080
+              scheme: HTTP
+            failureThreshold: 10
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+          volumeMounts:
+            - mountPath: /data
+              name: ccx-data-pipeline-config
+          volumes:
+            - configMap:
+                name: ccx-data-pipeline-config-map
+              name: ccx-data-pipeline-config
+          resources:
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+    kafkaTopics:
+      - replicas: 3
+        partitions: 16
+        topicName: ${CDP_INCOMING_TOPIC}
+      - replicas: 3
+        partitions: 1
+        topicName: ${CDP_OUTGOING_TOPIC}
+      - replicas: 3
+        partitions: 1
+        topicName: ${PAYLOAD_TRACKER_TOPIC}
+      - replicas: 3
+        partitions: 1
+        topicName: ${CDP_DEAD_LETTER_QUEUE_TOPIC}
+
+- kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    labels:
+      app: ccx-data-pipeline
+    name: ccx-data-pipeline-config-map
+  data:
+    config.yaml: |-
+      plugins:
+        packages:
+          - ccx_rules_ocp.external
+          - ccx_rules_processing
+        configs:
+          - name: ccx_ocp_core.config.telemeter.TelemeterServiceConfig
+            enabled: false
+      service:
+        extract_timeout:
+        extract_tmp_dir:
+        format: ccx_ocp_core.core.formats.json.OCPRecommendationsJsonFormat
+        target_components: []
+        consumer:
+          name: ccx_messaging.consumers.kafka_consumer.KafkaConsumer
+          kwargs:
+            incoming_topic: ${CDP_INCOMING_TOPIC}
+            platform_service: ${CDP_PLATFORM_SERVICE}
+            dead_letter_queue_topic: ${CDP_DEAD_LETTER_QUEUE_TOPIC}
+            group.id: ${CDP_GROUP_ID}
+            bootstrap.servers: ${CDP_CONSUMER_SERVER}
+            max.poll.interval.ms: 600000
+            heartbeat.interval.ms: 10000
+            session.timeout.ms: 20000
+
+        downloader:
+          name: ccx_messaging.downloaders.http_downloader.HTTPDownloader
+          kwargs:
+            allow_unsafe_links: ${ALLOW_UNSAFE_LINKS}
+
+        engine:
+          name: ccx_messaging.engines.ocp_engine.OCPEngine
+
+        publisher:
+          name: ccx_messaging.publishers.rule_processing_publisher.RuleProcessingPublisher
+          kwargs:
+            outgoing_topic: ${CDP_OUTGOING_TOPIC}
+            bootstrap.servers: ${CDP_CONSUMER_SERVER}
+        watchers:
+          - name: ccx_messaging.watchers.stats_watcher.StatsWatcher
+          - name: ccx_messaging.watchers.cluster_id_watcher.ClusterIdWatcher
+          - name: ccx_messaging.watchers.payload_tracker_watcher.PayloadTrackerWatcher
+            kwargs:
+              bootstrap.servers: ${CDP_CONSUMER_SERVER}
+              topic: ${PAYLOAD_TRACKER_TOPIC}
+
+        logging:
+          version: 1
+          disable_existing_loggers: false
+          handlers:
+            default:
+              level: ${LOG_LEVEL}
+              class: logging.StreamHandler
+              stream: ext://sys.stdout
+              formatter: json
+          formatters:
+            brief:
+              format: "%(asctime)s %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
+            json:
+              (): "pythonjsonlogger.json.JsonFormatter"
+              format: "%(filename)s %(lineno)d %(process)d %(levelname)s %(asctime)s %(name)s %(message)s"
+            cloudwatch:
+              format: "%(filename)s %(levelname)s %(asctime)s %(name)s %(hostname)s %(mac_address)s %(message)s"
+
+          root:
+            handlers:
+              - default
+          loggers:
+            insights_messaging:
+              level: WARNING
+            insights:
+              level: WARNING
+            ccx_messaging:
+              level: ${LOG_LEVEL}
+- kind: Service
+  apiVersion: v1
+  metadata:
+    annotations:
+      prometheus.io/path: /metrics
+      prometheus.io/port: "8000"
+      prometheus.io/scheme: http
+      prometheus.io/scrape: "true"
+    name: ccx-data-pipeline-prometheus-exporter
+    labels:
+      app: ccx-data-pipeline
+  spec:
+    ports:
+      - name: ccx-data-pipeline-port-metrics
+        port: 8000
+        protocol: TCP
+        targetPort: 8000
+    selector:
+      app: ccx-data-pipeline
+
+parameters:
+- description: Image name
+  name: IMAGE
+  value: quay.io/redhat-services-prod/obsint-processing-tenant/data-pipeline/data-pipeline
+- description: Image tag
+  name: IMAGE_TAG
+  required: true
+- description: Log level for the application
+  name: LOG_LEVEL
+  value: INFO
+- description: Determines Clowder deployment
+  name: CLOWDER_ENABLED
+  value: "true"
+- description: ClowdEnv Name
+  name: ENV_NAME
+  required: true
+
+- description: Number of pods
+  name: REPLICAS
+  value: '1'
+
+- name: CPU_LIMIT
+  value: 200m
+- name: MEMORY_LIMIT
+  value: 512Mi
+- name: CPU_REQUEST
+  value: 100m
+- name: MEMORY_REQUEST
+  value: 256Mi
+
+- name: CLOUDWATCH_DEBUG
+  value: "false"
+  required: true
+- name: IRSP_LOG_STREAM
+  value: "ccx-data-pipeline"
+- name: ALLOW_UNSAFE_LINKS
+  value: ""
+
+- name: CDP_CONSUMER_SERVER
+  value: "mq-kafka:29092"
+  required: true
+- name: CDP_GROUP_ID
+  value: ccx_data_pipeline_app
+  required: true
+- description: Input topic name for configured Kafka consumer
+  name: CDP_INCOMING_TOPIC
+  value: platform.upload.announce
+  required: true
+- description: Dead letter queue topic for unprocessed messages in the consumer
+  name: CDP_DEAD_LETTER_QUEUE_TOPIC
+  value: ccx.data.pipeline.dead.letter.queue
+- description: Output topic name for configured Kafka publisher
+  name: CDP_OUTGOING_TOPIC
+  value: ccx.ocp.results
+  required: true
+- description: Kafka topic for publishing updated for the Payload Tracker service
+  name: PAYLOAD_TRACKER_TOPIC
+  value: platform.payload-status
+  required: true
+
+- description: Service name for filtering received Kafka message from announce topic
+  name: CDP_PLATFORM_SERVICE
+  value: openshift
+  required: true
+
+- name: SENTRY_ENABLED
+  value: "false"

@@ -1,0 +1,7 @@
+[run]
+source = ccx_data_pipeline, test
+
+[report]
+include =
+    ccx_data_pipeline/*
+    test/*
