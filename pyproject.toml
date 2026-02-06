@@ -6,5 +6,5 @@ dependencies = [
     "insights-core>=3.6.11",
     "ccx-ocp-core",
     "ccx-messaging==4.3.5",
-    "ccx-rules-ocp==2026.11.22",
+    "ccx-rules-ocp==2026.01.27",
 ]
