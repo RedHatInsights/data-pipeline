@@ -5,6 +5,18 @@ requires-python = ">=3.11"
 dependencies = [
     "insights-core>=3.6.11",
     "ccx-ocp-core",
-    "ccx-messaging==4.3.5",
-    "ccx-rules-ocp==2026.02.10",
+    "ccx-messaging==4.3.6",
+    "ccx-rules-ocp==2026.02.10.post1",
+    "boto3>=1.34.1,<1.42.35" # limited due to incompatibility between s3fs and newer versions of boto
 ]
+
+# Use Nexus index for the 'ccx-*' packages.
+[[tool.uv.index]]
+name = "redhat-nexus"
+url = "https://nexus.corp.redhat.com/repository/obsint-pypi/simple/"
+
+[tool.uv.sources]
+ccx-ocp-core = { index = "redhat-nexus" }
+ccx-messaging = { index = "redhat-nexus" }
+ccx-rules-ocp = { index = "redhat-nexus" }
+ccx-rules-processing = { index = "redhat-nexus" }
