@@ -5,9 +5,9 @@ ENV CONFIG_PATH=/ccx-data-pipeline/config.yaml \
 
 WORKDIR $HOME
 
-COPY pyproject.toml requirements.txt config.yaml LICENSE $HOME
+COPY pyproject.toml config.yaml LICENSE $HOME
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install .
 
 ENTRYPOINT []
 

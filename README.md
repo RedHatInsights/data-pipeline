@@ -21,19 +21,8 @@ and [insights-core-messaging framework](https://github.com/RedHatInsights/insigh
 Please refer to [insights-ccx-messaging/docs](https://github.com/RedHatInsights/insights-ccx-messaging/tree/main/docs) documentation for more details.
 
 ## Update dependencies
-This tutorial assumes installed `uv` dependency manager.
 
-1. Update versions of `ccx-messaging`, `ccx-rules-processing`, `ccx-rules-ocp` in `pyproject.toml`. If you are updating other package, you can add the restriction there and then remove it. For examp if you are updating `urllib3`, you can add the restriction `urllib3==2.6.3` and then clean the pyproject. If there are any dependencies broken by this change, just look in Pypi for the compatible version and add/update the restrictions.
-2. Update the `uv.lock` and its dependencies:
-```
-uv --native-tls lock --upgrade
-uv --native-tls sync
-```
-3. Export dependencies into `requirements.txt`
-```
-uv export --format requirements-txt --no-hashes > requirements.txt
-```
-4. Remove the `ccx-ocp-core` from the dependency list. The latest version is always pulled in automatically.
+Just force a rebuild of the container image with a commit.
 
 ## Benchmark tests
 
