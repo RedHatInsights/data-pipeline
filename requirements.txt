@@ -11,12 +11,12 @@ attrs==25.4.0
     #   insights-core-messaging
     #   jsonschema
     #   referencing
-boto3==1.42.25
+boto3==1.42.60
     # via
     #   ccx-data-pipeline
     #   ccx-messaging
     #   watchtower
-botocore==1.42.47
+botocore==1.42.60
     # via
     #   boto3
     #   s3fs
@@ -31,7 +31,7 @@ ccx-ocp-core==2026.2.24
     #   ccx-rules-ocp
 ccx-rules-ocp==2026.02.26
     # via ccx-data-pipeline
-certifi==2026.1.4
+certifi==2026.2.25
     # via
     #   kubernetes
     #   requests
@@ -40,7 +40,7 @@ cffi==2.0.0 ; platform_python_implementation != 'PyPy'
     # via cryptography
 charset-normalizer==3.4.4
     # via requests
-confluent-kafka==2.13.0
+confluent-kafka==2.13.2
     # via ccx-messaging
 cryptography==46.0.5
     # via ccx-ocp-core
@@ -54,13 +54,13 @@ defusedxml==0.7.1
     # via insights-core
 durationpy==0.10
     # via kubernetes
-filelock==3.20.3
+filelock==3.25.0
     # via cachecontrol
 fsspec==2026.2.0
     # via s3fs
 idna==3.11
     # via requests
-insights-core==3.7.2
+insights-core==3.7.4
     # via
     #   ccx-data-pipeline
     #   ccx-messaging
@@ -97,7 +97,7 @@ orderly-set==5.5.0
     # via deepdiff
 packaging==26.0
     # via ccx-rules-ocp
-pandas==3.0.0
+pandas==3.0.1
     # via
     #   ccx-ocp-core
     #   ccx-rules-ocp
@@ -118,14 +118,14 @@ python-dateutil==2.9.0.post0
     #   pandas
 python-json-logger==4.0.0
     # via ccx-messaging
-pytz==2025.2
+pytz==2026.1.post1
     # via dateparser
 pyyaml==6.0.3
     # via
     #   ccx-messaging
     #   insights-core
     #   kubernetes
-redis==7.1.1
+redis==7.2.1
     # via
     #   cachecontrol
     #   insights-core
@@ -133,7 +133,7 @@ referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
-regex==2026.1.15
+regex==2026.2.28
     # via dateparser
 requests==2.32.5
     # via
@@ -152,13 +152,13 @@ rpds-py==0.30.0
     #   referencing
 rpm==0.4.0
     # via insights-core
-s3fs==0.4.2
+s3fs==2026.2.0
     # via insights-core-messaging
 s3transfer==0.16.0
     # via boto3
 semver==3.0.4
     # via ccx-ocp-core
-sentry-sdk==2.52.0
+sentry-sdk==2.54.0
     # via ccx-messaging
 six==1.17.0
     # via
