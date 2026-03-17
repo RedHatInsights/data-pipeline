@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """Benchmarks comparing push and pull strategies for interface between CCX Data Pipeline and ACM."""
 
 # ## User story
@@ -110,13 +108,12 @@
 
 # we are going to display graphs and work with data frames
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
+import pandas as pd
 
 # let's display all graphs without the need to call .show()
-get_ipython().run_line_magic('matplotlib', 'inline')
+get_ipython().run_line_magic("matplotlib", "inline")
 
 
 # In[56]:
@@ -125,14 +122,14 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 # read all results that were stored in CSV files
 
 # pull model results
-pull_model_local_local = pd.read_csv('pull_model_local_local.csv')
-pull_model_local_remote = pd.read_csv('pull_model_local_remote.csv')
-pull_model_remote_remote = pd.read_csv('pull_model_remote_remote.csv')
+pull_model_local_local = pd.read_csv("pull_model_local_local.csv")
+pull_model_local_remote = pd.read_csv("pull_model_local_remote.csv")
+pull_model_remote_remote = pd.read_csv("pull_model_remote_remote.csv")
 
 # push model results
-push_model_local_local = pd.read_csv('push_model_local_local.csv')
-push_model_local_remote = pd.read_csv('push_model_local_remote.csv')
-push_model_remote_remote = pd.read_csv('push_model_remote_remote.csv')
+push_model_local_local = pd.read_csv("push_model_local_local.csv")
+push_model_local_remote = pd.read_csv("push_model_local_remote.csv")
+push_model_remote_remote = pd.read_csv("push_model_remote_remote.csv")
 
 
 # In[57]:
@@ -194,13 +191,13 @@ ind = np.arange(1)
 width = 0.35  # the width of the bars
 
 fig, ax = plt.subplots()
-rects1 = ax.bar(ind - width / 2, t_pull, width, color='SkyBlue', label='pull model')
-rects2 = ax.bar(ind + width / 2, t_push, width, color='IndianRed', label='push model')
+rects1 = ax.bar(ind - width / 2, t_pull, width, color="SkyBlue", label="pull model")
+rects2 = ax.bar(ind + width / 2, t_push, width, color="IndianRed", label="push model")
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
-ax.set_ylabel('time for 10000 reports')
+ax.set_ylabel("time for 10000 reports")
 ax.set_xticks(ind)
-ax.set_xticklabels('')
+ax.set_xticklabels("")
 ax.legend()
 
 
@@ -219,13 +216,13 @@ ind = np.arange(1)
 width = 0.35  # the width of the bars
 
 fig, ax = plt.subplots()
-rects1 = ax.bar(ind - width / 2, t_pull, width, color='SkyBlue', label='pull model')
-rects2 = ax.bar(ind + width / 2, t_push, width, color='IndianRed', label='push model')
+rects1 = ax.bar(ind - width / 2, t_pull, width, color="SkyBlue", label="pull model")
+rects2 = ax.bar(ind + width / 2, t_push, width, color="IndianRed", label="push model")
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
-ax.set_ylabel('time for 10000 reports')
+ax.set_ylabel("time for 10000 reports")
 ax.set_xticks(ind)
-ax.set_xticklabels('')
+ax.set_xticklabels("")
 ax.legend()
 
 
@@ -244,13 +241,13 @@ ind = np.arange(1)
 width = 0.35  # the width of the bars
 
 fig, ax = plt.subplots()
-rects1 = ax.bar(ind - width / 2, t_pull, width, color='SkyBlue', label='pull model')
-rects2 = ax.bar(ind + width / 2, t_push, width, color='IndianRed', label='push model')
+rects1 = ax.bar(ind - width / 2, t_pull, width, color="SkyBlue", label="pull model")
+rects2 = ax.bar(ind + width / 2, t_push, width, color="IndianRed", label="push model")
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
-ax.set_ylabel('time for 10000 reports')
+ax.set_ylabel("time for 10000 reports")
 ax.set_xticks(ind)
-ax.set_xticklabels('')
+ax.set_xticklabels("")
 ax.legend()
 
 

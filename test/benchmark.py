@@ -4,13 +4,13 @@ Benchmarking.
 This is intended to be run directly, not using pytest.
 """
 
-import logging
-import kafka
 import datetime
+import logging
 import os
 import random
 import string
 
+import kafka
 from app_common_python import LoadedConfig, isClowderEnabled
 
 logging.getLogger().setLevel(logging.INFO)
@@ -21,7 +21,7 @@ def test_benchmark_not_ccx_headers(config):
     start_time = datetime.datetime.now()
     producer = kafka.KafkaProducer(bootstrap_servers=config["kafka_url"])
 
-    for i in range(config["messages_no"]):
+    for _ in range(config["messages_no"]):
         producer.send(
             topic=config["ingress_topic"],
             value=bytes(get_message_value(config["message_len"]), "ascii"),
@@ -52,6 +52,8 @@ if __name__ == "__main__":
 
     if isClowderEnabled():
         clowder_broker_config = LoadedConfig.kafka.brokers[0]
-        config["kafka_url"] = f"{clowder_broker_config.hostname}:{clowder_broker_config.port}"
+        config["kafka_url"] = (
+            f"{clowder_broker_config.hostname}:{clowder_broker_config.port}"
+        )
 
     test_benchmark_not_ccx_headers(config)
