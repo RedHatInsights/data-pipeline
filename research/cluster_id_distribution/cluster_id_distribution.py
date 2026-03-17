@@ -16,8 +16,9 @@
 
 """Plots histogram displaying distribution of the first digit in cluster ID."""
 
-import sys
 import csv
+import sys
+
 import matplotlib.pyplot as plt
 import numpy
 
@@ -60,7 +61,7 @@ plt.hist(digits, bins=bins, range=None, density=False, rwidth=0.9)
 plt.xticks(numpy.arange(0, 16) + 0.5, range(0, 16), fontsize=7)
 
 # Add a grid
-plt.grid(axis='y', alpha=0.50)
+plt.grid(axis="y", alpha=0.50)
 
 # Title of a graph
 plt.title("Distribution of the first digit in cluster IDs")
