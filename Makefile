@@ -10,3 +10,6 @@ docs/packages/%.html: %.py
 	pycco -d $(dir $@) $^
 
 pycco: ${DOCFILES}
+
+before_commit:
+	pre-commit run --all-files
