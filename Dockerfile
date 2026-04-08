@@ -1,4 +1,4 @@
-FROM quay.io/redhat-services-prod/obsint-processing-tenant/rules-containers/rules-containers-private:2026.03.24
+FROM quay.io/redhat-services-prod/obsint-processing-tenant/rules-containers/rules-containers-private:2026.04.07
 
 ENV CONFIG_PATH=/ccx-data-pipeline/config.yaml \
     HOME=/ccx-data-pipeline
