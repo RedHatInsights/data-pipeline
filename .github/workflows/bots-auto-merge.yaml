@@ -1,0 +1,8 @@
+name: Enable auto-merge for bots
+
+on:
+  pull_request:
+
+jobs:
+  enable-auto-merge:
+    uses: joselsegura/processing-tools/.github/workflows/bots-auto-merge.yaml@auto-approve-reusable-workflow
