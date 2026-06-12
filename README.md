@@ -1,6 +1,7 @@
 # CCX Data Pipeline
 
-[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-31115/)
+[![Linters](https://github.com/RedHatInsights/data-pipeline/actions/workflows/linters.yaml/badge.svg)](https://github.com/RedHatInsights/data-pipeline/actions/workflows/linters.yaml)
 
 - [CCX Data Pipeline](#ccx-data-pipeline)
   - [Description](#description)
