@@ -16,7 +16,7 @@ RUN dnf install -y cpio && \
     mkdir -p /tmp/extracted && \
     for rpm in *.rpm; do rpm2cpio "$rpm" | cpio -idmv -D /tmp/extracted; done
 
-FROM quay.io/redhat-services-prod/obsint-processing-tenant/rules-containers/rules-containers-private:2026.06.02
+FROM quay.io/redhat-services-prod/obsint-processing-tenant/rules-containers/rules-containers-private:2026.06.16
 
 ENV CONFIG_PATH=/ccx-data-pipeline/config.yaml \
     HOME=/ccx-data-pipeline
