@@ -5,7 +5,7 @@ requires-python = ">=3.11"
 dependencies = [
     "insights-core>=3.6.11",
     "ccx-ocp-core",
-    "ccx-messaging @ git+https://github.com/RedHatInsights/insights-ccx-messaging@v4.3.9",
+    "ccx-messaging==4.3.8",
     "ccx-rules-ocp",
     "boto3>=1.42.0,<1.42.92" # limited due to incompatibility between s3fs and newer versions of boto
 ]

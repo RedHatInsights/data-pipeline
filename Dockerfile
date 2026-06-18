@@ -25,13 +25,7 @@ WORKDIR $HOME
 
 COPY pyproject.toml config.yaml LICENSE $HOME/
 
-COPY --from=builder /tmp/extracted /
-
-# FIXME(CCXDEV-16469): Clean up unnecessary packages with CVEs as in private rules container Dockerfile
-RUN pip install --no-cache-dir . && \
-    rm -rf /usr/bin/git* /usr/bin/scalar /usr/libexec/git-core \
-           /usr/bin/ssh* /usr/bin/scp /usr/bin/sftp /usr/libexec/openssh \
-           /usr/lib64/libsqlite3.so* /usr/lib64/libgssapi_krb5.so* /usr/lib64/libkrb5*.so* /usr/lib64/libk5crypto.so*
+RUN pip install --no-cache-dir .
 
 ENTRYPOINT []
 
