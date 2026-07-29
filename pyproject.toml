@@ -7,5 +7,5 @@ dependencies = [
     "ccx-ocp-core",
     "ccx-messaging==4.4.0",
     "ccx-rules-ocp",
-    "boto3>=1.42.0,<1.42.92" # limited due to incompatibility between s3fs and newer versions of boto
+    "boto3>=1.43.56,<1.43.57" # limited due to incompatibility between s3fs and newer versions of boto
 ]
