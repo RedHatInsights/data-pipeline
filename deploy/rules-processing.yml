@@ -12,8 +12,6 @@ objects:
     envName: ${ENV_NAME}
     testing:
       iqePlugin: ccx
-    objectStore:
-      - ${SOURCE_S3_BUCKET}
     deployments:
       - name: instance
         replicas: ${{REPLICAS}}
@@ -157,9 +155,9 @@ objects:
             bootstrap.servers: ${KAFKA_URL}
 
         downloader:
-          name: ccx_messaging.downloaders.s3_downloader.S3Downloader
+          name: ccx_messaging.downloaders.http_downloader.HTTPDownloader
           kwargs:
-            bucket: ${SOURCE_S3_BUCKET}
+            allow_unsafe_links: ${ALLOW_UNSAFE_LINKS}
 
         publisher:
           name: ccx_messaging.publishers.idp_rule_processing_publisher.IDPRuleProcessingPublisher
@@ -270,11 +268,8 @@ parameters:
 
   - name: PAYLOAD_TRACKER_TOPIC
     value: platform.payload-status
-
-
-  - name: SOURCE_S3_BUCKET
-    description: "Source S3 bucket for object store configuration"
-    value: "ccx-bucket"
+  - name: ALLOW_UNSAFE_LINKS
+    value: ""
 
   - name: CPU_LIMIT
     value: "1000m"
